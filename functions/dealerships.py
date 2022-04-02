@@ -18,7 +18,7 @@ def main(param):
         databaseName = param["CLOUDANT_DATABASE"]
     
         fields_int = ['id']
-        fields_str = ['city', 'state', 'st', 'address', 'zip']
+        fields_str = ['city', 'state', 'st', 'address', 'zip', 'short_name', 'full_name']
         fields_float = ['lat', 'long']
         
         selector = {}
