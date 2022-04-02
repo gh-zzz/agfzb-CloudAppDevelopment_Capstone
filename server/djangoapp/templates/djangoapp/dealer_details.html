@@ -10,9 +10,30 @@
     <body>
 
     <!--Add a nav bar here -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Home</a>
+        </div>
+    </nav>
 
     <!-- Add reviews as cards -->
-
+    {% if dealer_review_list %}
+    <div class="container"> <!--Style root div with .container class -->
+        <div class="card-deck"> <!--Style second div with .card-deck class -->
+            {% for review in dealer_review_list %}
+            <div class="card" style="width: 36rem;"> <!--Style third level div with .card class -->
+                <div class="card-body bg-light"> <!--Style root div with .card-body and .bg-light class -->
+                    <h5 class="card-title">{{ review.name }}, <span class="text-success"> <!--Style h5 with .card-title and span with .text-success class -->
+                              {{ review.sentiment }}</span></h5>
+                    <p class="card-text">{{ review.review }}</p> <!--Style card description with .card-text class -->
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <p>No reviews are available.</p>
+    {% endif %}
     </body>
 
 </html>

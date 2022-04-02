@@ -46,7 +46,28 @@
     </nav>
 
     <!--Add a dealer table here -->
-
+    {% if dealer_list %}
+    <table class="table">
+        <thead>
+            <tr>
+              <th scope="col">Dealer</th>
+              <th scope="col">State</th>
+              <th scope="col">City</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dealer in dealer_list %}
+        <tr>
+           <td><a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{ dealer.short_name }}</td>
+           <td>{{ dealer.st }}</td>
+           <td>{{ dealer.city }}</td>
+        </tr>
+        {% endfor %}
+        <tbody>
+    </table>
+    {% else %}
+    <p>No dealers are available.</p>
+    {% endif %}
     </body>
 
 </html>
