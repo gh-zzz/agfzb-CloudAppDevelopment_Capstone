@@ -36,6 +36,25 @@ def get_request(url, **kwargs):
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
+def post_request(url, payload, **kwargs):
+    print(kwargs)
+    print("POST to {} ".format(url))
+    try:
+        api_key = kwargs.get('api_key', None)
+        if api_key != None:
+            del kwargs['api_key']
+            response = requests.post(url, json=payload, headers={'Content-Type': 'application/json'},
+                                     params=kwargs, auth=HTTPBasicAuth('apikey', api_key))
+        else:
+            response = requests.post(url, json=payload, headers={'Content-Type': 'application/json'},
+                                     params=kwargs)
+    except:
+        # If any error occurs
+        print("Network exception occurred")
+    status_code = response.status_code
+    print("With status {} ".format(status_code))
+    json_data = json.loads(response.text)
+    return json_data
 
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
@@ -86,7 +105,7 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                 car_model=review.get('car_model', ''),
                 car_year=review.get('car_year', ''),
                 sentiment=analyze_review_sentiments(review['review']),
-                id=review['id'])
+                id=review.get('id', ''))
             results.append(review_obj)
 
     return results
@@ -100,9 +119,9 @@ def get_dealer_by_id_from_cf(url, dealerId):
 def analyze_review_sentiments(text):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
-    url = 'https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/bf30f25c-b246-47bb-b407-bbf8f1af7f5b/v1/analyze?version=2021-08-01'
+    url = 'https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/bf30f25c-b246-47bb-b407-bbf8f1af7f5b/v1/analyze'
     api_key = '1wpMe0SMPCHyJvzZpYt6CW7J051m1Uq9EI1BkWN1kGo1'
-    params = {
+    payload = {
         "text": text,
         "features": {
             "sentiment": {
@@ -110,11 +129,12 @@ def analyze_review_sentiments(text):
         },
         "language": "en"
     }
-    response = requests.post(url, json=params, headers={'Content-Type': 'application/json'},
-                             auth=('apikey', api_key))
-    sentiment = response.json()["sentiment"]["document"]["label"]                                
-    return sentiment
-
+    response = post_request(url, payload,
+        api_key=api_key,
+        version='2021-08-01'
+    )
+    print(response)
+    return response["sentiment"]["document"]["label"]
 
 
 

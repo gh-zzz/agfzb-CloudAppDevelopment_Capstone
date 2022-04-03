@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 from .models import CarModel
 # from .restapis import related methods
-from .restapis import get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -111,4 +111,24 @@ def add_review(request, dealer_id):
         context['cars'] = cars
         return render(request, 'djangoapp/add_review.html', context)
     elif request.method == "POST":
-        pass
+        if request.user.is_authenticated:
+            form = request.POST
+            print(form)
+            review = {
+                "name": "{request.user.first_name} {request.user.last_name}",
+                "dealership": dealer_id,
+                "review": form["content"],
+                "purchase": form.get("purchasecheck"),
+            }
+            if form.get("purchasecheck"):
+                review["purchase_date"] = datetime.strptime(form.get("purchasedate"), "%m/%d/%Y").isoformat()
+                car = get_object_or_404(CarModel, pk=form["car"])
+                review["car_make"] = car.car_make.name
+                review["car_model"] = car.name
+                review["car_year"] = car.year.strftime("%Y")
+            json_payload = { "review": review }
+            print(json_payload)
+            post_request(URL+"/review", json_payload, dealerId=dealer_id)
+            return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
+        else:
+            return redirect("djangoapp:login")

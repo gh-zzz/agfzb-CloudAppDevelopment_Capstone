@@ -5,7 +5,7 @@
     {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
 
@@ -56,9 +56,8 @@
         <div class="mb-3">
             <label for="car"><b>Select your car (model-make-year):</b></label>
             <select name="car" id="car" class="form-select" required>
-                <option selected value=""></option>
                 {% for car in cars %}
-                <option value="{{ car.id }}">{{car.name}}-{{car.make.name}}-{{ car.year|date:"Y" }}</option>
+                <option selected value="{{ car.id }}">{{car.name}}-{{car.car_make.name}}-{{ car.year|date:"Y" }}</option>
                 {% endfor %}
             </select>
         </div>
